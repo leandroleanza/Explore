@@ -1,0 +1,118 @@
+{
+  "_note": "Testi provvisori, da riscrivere a piacere. I messaggi si sbloccano nell'ordine in cui sono elencati. 'site' e' l'edificio a cui il messaggio e' legato (il cerchio di lettura si trova sulla strada davanti all'edificio); in alternativa si possono dare x,z in metri (+x est, -z nord). 'radius' e' il raggio del cerchio di lettura.",
+  "radius": 8,
+  "messages": [
+    {
+      "id": "corriere",
+      "x": 28,
+      "z": -6,
+      "title": "Il corriere",
+      "text": "Sul sedile c'è una mappa piegata male. Tredici segni a matita, numerati, e un biglietto: «Se leggi questo, il fuoristrada è tuo. Segui i segni in ordine, senza saltarne nessuno. L'ultimo porta alla città.»"
+    },
+    {
+      "id": "raffineria",
+      "site": "refinery",
+      "title": "La raffineria",
+      "text": "Le torri sono spente da anni, ma l'aria sa ancora di metallo caldo. Sulla recinzione qualcuno ha inciso una data. Nel primo taccuino: «Il carburante è finito per primo. L'acqua è finita poco dopo. Serve corrente, prima di tutto.»"
+    },
+    {
+      "id": "turbotina",
+      "site": "turbotina",
+      "title": "La centrale di Turbotina",
+      "text": "Le turbine sono ferme, tranne una. Gira piano, con un fischio sottile, e alimenta una lampadina appesa a un filo. Sul registro: «Produce poco, ma basta per una pompa. Una pompa basta per cominciare.»"
+    },
+    {
+      "id": "piperto",
+      "site": "piperto",
+      "title": "Il nodo di Piperto",
+      "text": "Un labirinto di tubi che parte da qui e sparisce verso nord. Nessuno è rotto: le valvole sono state chiuse a mano, una a una, con cura. Qualcuno non ha buttato via niente e ha aspettato un motivo per riaprirle."
+    },
+    {
+      "id": "certain",
+      "site": "certain",
+      "title": "La distilleria di Certain",
+      "text": "Vasche di acqua salmastra e file di filtri sostituiti da poco. Dal rubinetto cade una goccia al secondo. Su un foglio, in stampatello: «Non basta per una città. Basta per chi la tiene in piedi.»"
+    },
+    {
+      "id": "zucchero",
+      "site": "sugar",
+      "title": "La stazione dello zucchero",
+      "text": "Casse di razioni ordinate per data, sacchi di zucchero chiusi con lo spago. Al muro, il disegno di un bambino: una città con un fiume blu che le passa in mezzo. Sotto, una firma storta: «per Ada»."
+    },
+    {
+      "id": "mulino",
+      "site": "mulino",
+      "title": "Il mulino",
+      "text": "Le pale sono state rattoppate con lamiera e corda, e girano con il vento del deserto. Non macinano grano: muovono l'albero che scende nel pozzo. Un cartello dice: «Il vento è gratis. Non sprecarlo.»"
+    },
+    {
+      "id": "casa",
+      "site": "woody",
+      "title": "La casa di legno",
+      "text": "Un bollitore ancora tiepido, una branda rifatta, una foto di gruppo con quattro persone davanti al cantiere. Su un foglio: «Mi chiamo Ada. Ho tenuto in vita queste stazioni finché ho potuto. Ora tocca a chi guida.»"
+    },
+    {
+      "id": "cupole",
+      "site": "happillo",
+      "title": "Le cupole di Happillo",
+      "text": "Sotto le cupole, tra le lampade, cresce qualcosa di verde: pomodori, erba, un albero di limone alto quanto te. Ogni goccia di condensa viene raccolta e riportata alle radici. La cosa più viva che hai visto da giorni."
+    },
+    {
+      "id": "sempis",
+      "site": "sempis",
+      "title": "Il seme di Sempis",
+      "text": "Un cilindro sigillato, nascosto tra i pali. Dentro, semi etichettati a mano e una chiave d'ottone con una sola parola incisa: IDRO. Un biglietto: «La chiave apre l'impianto. I semi sono per dopo.»"
+    },
+    {
+      "id": "radio",
+      "site": "lecarbusio",
+      "title": "La casa sui pilastri",
+      "text": "Una radio a manovella gracchia su una frequenza sola: «Qui la città. Siamo ancora in tremila. Abbiamo acqua per quattro giorni. Chiunque ascolti, chiunque sia, venga.» Il messaggio si ripete da settimane."
+    },
+    {
+      "id": "idrico",
+      "site": "hydro",
+      "title": "L'impianto idrico",
+      "text": "Le vasche sono asciutte, ma le pompe sono state pulite da poco. La chiave gira al primo colpo. Un rombo profondo sale dal sottosuolo e, a nord, un tubo comincia a vibrare: l'acqua sta tornando in circolo."
+    },
+    {
+      "id": "piattaforma",
+      "site": "space",
+      "title": "La piattaforma Space Oddity",
+      "text": "Un'antenna enorme, puntata verso nord. Il pannello risponde ai comandi: trasmetti tre parole, «acqua in arrivo». Lontano, sull'orizzonte, una a una si accendono le luci di una città che credeva di essere sola."
+    },
+    {
+      "id": "citta",
+      "site": "city",
+      "title": "La città",
+      "text": "I cancelli si aprono prima che tu suoni. Gente sulle strade, mani alzate, bambini che corrono verso le fontane. Qualcuno riconosce il fuoristrada e sorride: il corriere non era arrivato, ma tu sì."
+    }
+  ],
+  "epilogue": {
+    "title": "La storia completa",
+    "paragraphs": [
+      "Anni fa la città rimase senza acqua. Il fiume si era ritirato e le falde erano scese troppo. Chi poteva se ne andò; chi restò cominciò a contare i giorni.",
+      "Ada, un'ingegnera, non accettò di aspettare. Con pochi altri rimise in piedi una catena di stazioni nel deserto: la raffineria per il carburante, la centrale di Turbotina per la corrente, le tubature di Piperto, la distilleria di Certain, il mulino e le cupole di Happillo per l'acqua e il cibo.",
+      "Ogni stazione dipendeva dalla successiva. Per questo i corrieri seguivano sempre lo stesso ordine, lasciando taccuini, razioni e piccoli segni di cura. Ada nascose la chiave dell'impianto idrico a Sempis, dove nessuno l'avrebbe cercata per caso.",
+      "Quando le forze finirono, Ada lasciò la mappa all'ultimo corriere. Lui non riuscì a completarla. La radio della casa sui pilastri continuava a chiamare: la città aveva acqua per quattro giorni.",
+      "Tu hai preso il suo fuoristrada, hai seguito i tredici segni e hai usato la chiave. L'impianto ha riacceso le pompe, l'acqua è risalita lungo i tubi di Piperto, e da Space Oddity hai avvisato la città.",
+      "Oggi le fontane sono di nuovo aperte, e nelle cupole di Happillo è pronto il primo raccolto. Il deserto è ancora lì, ma adesso ha una strada, e alla fine della strada qualcuno ti aspetta."
+    ]
+  },
+  "gameover": {
+    "meta": "Fine del viaggio",
+    "title": "Il deserto ha vinto",
+    "paragraphs": [
+      "Il masso era lì prima della strada, prima delle stazioni, prima ancora di Ada. Non si è spostato di un centimetro. Il fuoristrada, invece, si è aperto come una scatola: lamiere, ruote e taniche sparse nella sabbia, e la mappa piegata male che vola via nel vento.",
+      "@progress",
+      "Ai margini della mappa, con la calligrafia stretta di Ada, c'è scritto: «Il masso non ha fretta. Tu sì, ed è per questo che devi rallentare.» Sotto i 40 km/h un masso si aggira. Sopra, ti aspetta."
+    ],
+    "progress": {
+      "none": "Nessun segno è stato ancora seguito. In città qualcuno continua a guardare verso nord e a contare i giorni d'acqua che restano.",
+      "some": "Hai seguito {n} segni su {tot}. Le stazioni che hai riacceso restano accese, ma la catena non è chiusa: l'acqua non è ancora arrivata in città.",
+      "all": "Avevi già portato l'acqua in città. Nessuno ti rimprovererà per il fuoristrada: ne troveranno un altro, e la strada ormai esiste."
+    },
+    "again": "Riparti dal via",
+    "reset": "Ricomincia la storia"
+  }
+}
