@@ -33,7 +33,12 @@
   h1 span { color: var(--accent); }
   .sub { color: var(--muted); margin: 4px 0 0; }
 
-  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 14px 0; }
+  .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 14px 0; }
+  .stat.den .val { color: var(--bad); }
+  .bubble.ok { background: #e1f4e8; color: var(--good); align-self: stretch; max-width: 100%; text-align: center; font-weight: 600; }
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .choices button { margin: 0; background: var(--accent); color: #fff; }
+  .choices small { display: block; font-weight: 400; opacity: .9; margin-top: 2px; }
   .stat { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 10px 8px; text-align: center; }
   .stat .lbl { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
   .stat .val { font-size: 1.25rem; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
@@ -94,7 +99,6 @@
 
   @media (max-width: 520px) {
     .stats { grid-template-columns: repeat(2, 1fr); }
-    .stats .stat:last-child { grid-column: span 2; }
     .meters { grid-template-columns: 1fr; }
     .temper { display: none; }
   }
@@ -111,6 +115,7 @@
     <div class="stat"><div class="lbl">Progetto</div><div class="val" id="round">1/5</div></div>
     <div class="stat"><div class="lbl">Revisioni</div><div class="val" id="revs">0</div></div>
     <div class="stat earn"><div class="lbl">Incassato</div><div class="val" id="bank">0 €</div></div>
+    <div class="stat den"><div class="lbl">Denunce</div><div class="val" id="den">0/2</div></div>
     <div class="stat"><div class="lbl">Spese fisse</div><div class="val" id="costs">5.000 €</div></div>
     <div class="stat"><div class="lbl">Record</div><div class="val" id="best">0 €</div></div>
   </section>
@@ -146,6 +151,10 @@
     <button class="rev" id="revBtn">✏️ Un'altra revisione</button>
     <button class="ship" id="shipBtn">📦 Consegna e fattura</button>
   </section>
+  <section class="actions" id="blackActions" style="display:none">
+    <button class="rev" id="blackBtn">🕶️ Chiedi in nero</button>
+    <button class="ship" id="cleanBtn">🧾 Pagamento regolare</button>
+  </section>
   <div class="keys">Tastiera: Spazio = revisione · C = consegna</div>
 
   <details>
@@ -156,6 +165,8 @@
       <li>Ma ogni revisione consuma la pazienza del cliente: prima di ogni ritocco c'è la probabilità mostrata che si stufi e butti via tutto. In quel caso il progetto vale zero.</li>
       <li>Ogni cliente ha un carattere diverso: alcuni sopportano molte revisioni, altri esplodono presto.</li>
       <li>Consegna quando vuoi per incassare. Alla fine si conta il totale.</li>
+      <li>Dopo ogni pagamento riuscito provi a chiedere di essere pagato in nero: la probabilità di successo è casuale e la vedi nel messaggio. Se va male, il cliente ti denuncia.</li>
+      <li>Con due denunce, a fine anno devi fuggire in Messico o in Argentina: scegli la meta con la probabilità di fuga migliore. Se fallisci, vieni arrestato.</li>
     </ul>
   </details>
 </main>
@@ -219,7 +230,7 @@
 
   const $ = id => document.getElementById(id);
   const el = {
-    round: $("round"), revs: $("revs"), bank: $("bank"), best: $("best"),
+    den: $("den"), round: $("round"), revs: $("revs"), bank: $("bank"), best: $("best"),
     avatar: $("avatar"), client: $("client"), job: $("job"), temper: $("temper"),
     qTxt: $("qTxt"), qBar: $("qBar"), rTxt: $("rTxt"), rBar: $("rBar"), fee: $("fee"), loss: $("loss"),
     log: $("log"), rev: $("revBtn"), ship: $("shipBtn"), brief: $("brief"),
@@ -238,7 +249,7 @@
   function newGame() {
     const pool = CLIENTS.slice();
     for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-    s = { round: 1, bank: 0, clients: pool.slice(0, ROUNDS), history: [] };
+    s = { round: 1, bank: 0, denunce: 0, black: null, clients: pool.slice(0, ROUNDS), history: [] };
     startProject();
   }
 
@@ -247,6 +258,7 @@
     s.quality = rand(8, 14);
     s.revs = 0;
     s.over = false;
+    s.black = null;
     el.log.innerHTML = "";
     say("sys", `Nuovo incarico: ${s.c.job}`);
     say("me", `Ecco la bozza! (qualità ${s.quality})`);
@@ -295,7 +307,47 @@
     s.history.push({ c: s.c, got, revs: s.revs, fail: false });
     say("client", pick(HAPPY));
     render();
-    setTimeout(() => endProject(true, got), 600);
+    setTimeout(() => askBlack(got), 700);
+  }
+
+  // Dopo il pagamento riuscito: il giocatore sceglie se chiedere il nero
+  function askBlack(got) {
+    const p = rand(15, 65);
+    const main = el.rev.parentElement, box = $("blackActions");
+    const bBtn = $("blackBtn"), cBtn = $("cleanBtn");
+    const bonus = Math.round(got * 0.4), nero = got + bonus;
+    main.style.display = "none";
+    box.style.display = "grid";
+    bBtn.innerHTML = `🕶️ Chiedi in nero (${p}%)<small style="display:block;font-weight:400">+40% → ${eur(nero)}</small>`;
+    cBtn.innerHTML = `🧾 Pagamento regolare<small style="display:block;font-weight:400">${eur(got)}</small>`;
+    say("sys", `Vuoi provare a farti pagare in nero? In nero incasseresti il 40% in più: ${eur(nero)} invece di ${eur(got)}.`);
+    const close = () => { box.style.display = "none"; main.style.display = ""; bBtn.onclick = cBtn.onclick = null; };
+    cBtn.onclick = () => {
+      close();
+      say("me", "Nessun problema, le mando la fattura regolare.");
+      setTimeout(() => endProject(true, got), 700);
+    };
+    bBtn.onclick = () => {
+      close();
+      say("me", `Senta… potrei avere il pagamento in nero? Sarebbero ${eur(nero)}. <span class="gain">(probabilità di successo: ${p}%)</span>`);
+      setTimeout(() => {
+        let final = got;
+        if (rand(1, 100) <= p) {
+          s.black = "ok";
+          s.bank += bonus;
+          s.history[s.history.length - 1].got = nero;
+          final = nero;
+          say("ok", `😎 Bravo, l'hai fatta franca! Incassi ${eur(nero)}.`);
+        } else {
+          s.black = "denuncia";
+          s.denunce++;
+          say("fail", "🚨 Io la denuncio!");
+          el.brief.classList.remove("shake"); void el.brief.offsetWidth; el.brief.classList.add("shake");
+        }
+        render();
+        setTimeout(() => endProject(true, final), 1100);
+      }, 900);
+    };
   }
 
   function endProject(ok, value) {
@@ -308,6 +360,8 @@
       el.mText.textContent = s.revs
         ? `${s.c.name} ha approvato dopo ${s.revs} ${s.revs === 1 ? "revisione" : "revisioni"}.`
         : `${s.c.name} ha preso la bozza così com'era.`;
+      if (s.black === "ok") el.mText.textContent += " Pagamento in nero: l'hai fatta franca.";
+      else if (s.black === "denuncia") el.mText.textContent += ` Pagamento in nero rifiutato: ti sei beccato una denuncia (${s.denunce}/2).`;
     } else {
       el.mTitle.textContent = "Progetto cestinato 🗑️";
       el.mBig.style.color = "var(--bad)";
@@ -325,7 +379,9 @@
   }
 
   function finalScreen() {
-    const record = s.bank > best;
+    if (s.denunce >= 2 && !s.escape) return escapeScreen();
+    if (s.escape && !s.escape.ok) return arrestScreen();
+    const record = s.bank > best && s.bank >= COSTS;
     if (record) { best = s.bank; try { localStorage.setItem("revisione-best", String(best)); } catch (e) {} }
     if (s.bank < COSTS) {
       el.mTitle.textContent = "📉 Studio in rosso";
@@ -338,12 +394,56 @@
       el.mBig.textContent = eur(s.bank);
       el.mText.textContent = verdict(s.bank) + (record ? "" : ` Il tuo record è ${eur(best)}.`);
     }
+    if (s.escape && s.escape.ok) {
+      el.mText.textContent = `${s.escape.ico} Fuga in ${s.escape.dest} riuscita (${s.escape.p}%): sei salvo! ` + el.mText.textContent;
+    }
     el.mExtra.innerHTML = '<div class="summary">' + s.history.map(h =>
       `<div><span>${h.c.ico} ${h.c.name} · ${h.revs} rev.</span><b style="color:${h.fail ? "var(--bad)" : "var(--good)"}">${h.fail ? "cestinato" : eur(h.got)}</b></div>`
     ).join("") + "</div>";
     el.mBtn.textContent = "Riapri lo studio";
     el.mBtn.onclick = () => { hide(); newGame(); };
     render();
+    show();
+  }
+
+  function escapeScreen() {
+    const opts = [
+      { name: "Messico", ico: "🇲🇽", p: rand(25, 75) },
+      { name: "Argentina", ico: "🇦🇷", p: rand(25, 75) }
+    ];
+    el.mTitle.textContent = "⚖️ Due denunce: devi fuggire!";
+    el.mBig.style.color = "var(--bad)";
+    el.mBig.textContent = "Dove scappi?";
+    el.mText.textContent = "La polizia è sulle tue tracce. Scegli la meta: ogni rotta ha una diversa probabilità di riuscita.";
+    el.mBtn.style.display = "none";
+    el.mExtra.innerHTML = '<div class="choices">' + opts.map((o, i) =>
+      `<button data-i="${i}">${o.ico} ${o.name}<small>Fuga riuscita: ${o.p}%</small></button>`
+    ).join("") + "</div>";
+    el.mExtra.querySelectorAll("button").forEach(b => b.onclick = () => {
+      const o = opts[+b.dataset.i];
+      const ok = rand(1, 100) <= o.p;
+      s.escape = { ok, dest: o.name, ico: o.ico, p: o.p };
+      el.mBtn.style.display = "";
+      if (ok) {
+        el.mExtra.innerHTML = "";
+        finalScreen();
+      } else {
+        arrestScreen();
+      }
+    });
+    show();
+  }
+
+  function arrestScreen() {
+    const e = s.escape;
+    el.mBtn.style.display = "";
+    el.mTitle.textContent = "🚔 Arrestato!";
+    el.mBig.style.color = "var(--bad)";
+    el.mBig.textContent = "Game over";
+    el.mText.textContent = `Il tentativo di fuga in ${e.dest} (${e.p}% di probabilità) è fallito: ti hanno preso all'aeroporto. Ti hanno sequestrato anche i ${eur(s.bank)} incassati.`;
+    el.mExtra.innerHTML = "";
+    el.mBtn.textContent = "Riapri lo studio";
+    el.mBtn.onclick = () => { hide(); newGame(); };
     show();
   }
 
@@ -367,6 +467,7 @@
   function hide() { el.overlay.classList.remove("show"); }
 
   function render() {
+    el.den.textContent = `${s.denunce}/2`;
     el.round.textContent = `${s.round}/${ROUNDS}`;
     el.revs.textContent = s.revs;
     el.bank.textContent = eur(s.bank);
