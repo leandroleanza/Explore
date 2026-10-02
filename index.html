@@ -237,16 +237,34 @@ img.dev { animation: develop 2.8s ease-out both; }
   </div>
 </div>
 
+<script>
+(function () {
+  function $(q) { return document.querySelector(q); }
+  function say(m) { var st = $('#status'); if (st) st.textContent = m; }
+  window.addEventListener('error', function (e) {
+    var t = e && e.target;
+    if (t && t.tagName === 'SCRIPT') say('Impossibile caricare ' + (t.src || 'uno script') + ' (rete o blocco contenuti).');
+    else if (e && e.message) say('Errore: ' + e.message);
+  }, true);
+  window.addEventListener('unhandledrejection', function (e) { say('Errore: ' + (e && e.reason && e.reason.message ? e.reason.message : e.reason)); });
+  var ok = window.HTMLScriptElement && HTMLScriptElement.supports && HTMLScriptElement.supports('importmap');
+  document.addEventListener('DOMContentLoaded', function () {
+    if (!ok) { var b = $('#go'); if (b) b.textContent = 'Non supportato'; say('Browser troppo vecchio: aggiornalo (serve Chrome, Edge, Firefox o Safari recenti).'); }
+  });
+  setTimeout(function () {
+    var b = $('#go'), st = $('#status');
+    if (b && b.disabled && st && !/Errore|Impossibile|Browser/.test(st.textContent))
+      st.textContent = (st.textContent || '') + ' (il caricamento sta richiedendo molto tempo: connessione lenta o poca memoria)';
+  }, 45000);
+})();
+</script>
 <script type="importmap">
-{ "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-} }
+{ "imports": { "three": "./three.module.js" } }
 </script>
 <script type="module">
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { toCreasedNormals, mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { GLTFLoader } from './GLTFLoader.js';
+import { toCreasedNormals, mergeGeometries } from './BufferGeometryUtils.js';
 
 /* ---------- Configurazione (tutte le misure in metri) ---------- */
 const DEFAULT_STORY = /*STORY*/null;
